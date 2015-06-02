@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import web
+import tempfile
+import os
 
 urls = (
     "/", "Index",
@@ -12,13 +14,8 @@ class Index:
     def GET(self):
         return web.redirect('/static/index.html')
 
-    if __name__ == "__main__":
-        app.run()
-
 class Compile:
     def POST(self):
-        import tempfile
-        import os
         fd, filename = tempfile.mkstemp(suffix='.c')
         f = os.fdopen(fd, 'w')
         data = web.input()
@@ -33,8 +30,9 @@ class Compile:
         data = output.read()
         output.close()
         os.unlink(filename)
+        os.unlink(obj_filename)
         os.unlink(out_filename)
         return data
 
-    if __name__ == "__main__":
-        app.run()
+if __name__ == "__main__":
+    app.run()
